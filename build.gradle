@@ -18,7 +18,7 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.1'
     // https://mvnrepository.com/artifact/com.codeborne/selenide
-    implementation group: 'com.codeborne', name: 'selenide', version: '6.0.3'
+    testImplementation 'com.codeborne:selenide:5.19.0'
 
 }
 
