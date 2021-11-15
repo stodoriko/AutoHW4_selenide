@@ -7,11 +7,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.withText;
@@ -27,11 +30,15 @@ public class SelenideTest {
     @Test
     void shouldAcceptsDelivery() {
         // выбираем город
-        $(By.xpath("//span[contains(@class, 'input_has-autocomplete')]//input[@type='text']")).setValue("Москва");
-        $$(By.xpath("//div[contains(@class, 'popup__content')]//div")).find(exactText("Москва")).click();
+        String neededCity = "Москва";
+        $(By.xpath("//*[contains(@placeholder, 'Город')]")).setValue(neededCity);
+        $(By.xpath("//span[contains(text(), '" + neededCity + "')]")).click();
 
         // Дата - не ранее трёх дней с текущей даты
-        $(By.xpath("//input[contains(@class, 'input__control')and @type='tel']")).setValue("27.11.2222");
+        String today = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+        System.out.println("Сегодня = " + today);
+        $(By.xpath("//*[contains(@placeholder, 'Дата встречи')]")).sendKeys(Keys.BACK_SPACE);
+        $(By.xpath("//*[contains(@placeholder, 'Дата встречи')]")).setValue(today);
 
         // Поле Фамилия и имя - разрешены только русские буквы, дефисы и пробелы
         $("span[data-test-id='name'] input").setValue("Тодорико Сергей");
@@ -46,6 +53,7 @@ public class SelenideTest {
 
         $(withText("Успешно!")).shouldBe(visible, Duration.ofSeconds(15));
         $(withText("Встреча успешно забронирована на")).shouldBe(visible);
+        $(withText(today)).shouldBe(visible);
 
     }
 
