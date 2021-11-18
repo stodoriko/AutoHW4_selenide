@@ -51,7 +51,7 @@ public class SelenideTest {
         $$("button").find(exactText("Забронировать")).click();
 
         $(withText("Успешно!")).shouldBe(visible, Duration.ofSeconds(15));
-        $("div.notification__content").shouldBe(Text.text("Встреча успешно забронирована на " + d)).shouldBe(visible);
+        $("div.notification__content").shouldBe(Text.text("Встреча успешно забронирована на " + date)).shouldBe(visible);
 
     }
 
