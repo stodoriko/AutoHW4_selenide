@@ -1,6 +1,7 @@
 package ru.netology;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.conditions.Text;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,13 +33,11 @@ public class SelenideTest {
         // выбираем город
         String neededCity = "Москва";
         $(By.xpath("//*[contains(@placeholder, 'Город')]")).setValue(neededCity);
-        $(By.xpath("//span[contains(text(), '" + neededCity + "')]")).click();
 
         // Дата - не ранее трёх дней с текущей даты
-        String today = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-        System.out.println("Сегодня = " + today);
-        $(By.xpath("//*[contains(@placeholder, 'Дата встречи')]")).sendKeys(Keys.BACK_SPACE);
-        $(By.xpath("//*[contains(@placeholder, 'Дата встречи')]")).setValue(today);
+        String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+        $(By.xpath("//*[contains(@placeholder, 'Дата встречи')]")).doubleClick().sendKeys(Keys.BACK_SPACE);
+        $(By.xpath("//*[contains(@placeholder, 'Дата встречи')]")).setValue(date);
 
         // Поле Фамилия и имя - разрешены только русские буквы, дефисы и пробелы
         $("span[data-test-id='name'] input").setValue("Тодорико Сергей");
@@ -52,8 +51,7 @@ public class SelenideTest {
         $$("button").find(exactText("Забронировать")).click();
 
         $(withText("Успешно!")).shouldBe(visible, Duration.ofSeconds(15));
-        $(withText("Встреча успешно забронирована на")).shouldBe(visible);
-        $(withText(today)).shouldBe(visible);
+        $("div.notification__content").shouldBe(Text.text("Встреча успешно забронирована на " + d)).shouldBe(visible);
 
     }
 
